@@ -109,6 +109,9 @@ int main(void)
   BSP_LCD_SelectLayer(0);
   BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Electric Guitar Project", CENTER_MODE);
   printf("*****NTUEESAAD Electric Guitar Project*****\n");
+  // Draw Coordinates
+  BSP_LCD_DrawHLine(40, BSP_LCD_GetYSize()-20, BSP_LCD_GetXSize()-80);
+  BSP_LCD_DrawVLine(40, 80, BSP_LCD_GetYSize()-100);
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -73,6 +73,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 
 # Add linker flags
-target_link_options(${CMAKE_PROJECT_NAME}
-    PRIVATE -u _printf_float # floating point support
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -u _printf_float # floating point support
 )
