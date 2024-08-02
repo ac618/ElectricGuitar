@@ -50,14 +50,17 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     "Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_lcd.c"
     "Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c"
+    "Utilities/Plotlib/plotlib.c"
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     "Drivers/BSP/STM32746G-Discovery"
-    "Drivers/BSP/Utilities/Fonts"
     "Drivers/BSP/Components/rk04fn48h"
+    "Utilities/Fonts"
+    "Utilities/Plotlib"
+    "Drivers/CMSIS/DSP/Include"
 )
 
 # Add project symbols (macros)

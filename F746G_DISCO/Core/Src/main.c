@@ -28,6 +28,8 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "stm32746g_discovery_lcd.h"
+#include "plotlib.h"
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,14 +112,28 @@ int main(void)
   BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Electric Guitar Project", CENTER_MODE);
   printf("*****NTUEESAAD Electric Guitar Project*****\n");
   // Draw Coordinates
-  BSP_LCD_DrawHLine(40, BSP_LCD_GetYSize()-20, BSP_LCD_GetXSize()-80);
-  BSP_LCD_DrawVLine(40, 80, BSP_LCD_GetYSize()-100);
+  // BSP_LCD_DrawHLine(40, BSP_LCD_GetYSize()-20, BSP_LCD_GetXSize()-80);
+  // BSP_LCD_DrawVLine(40, 80, BSP_LCD_GetYSize()-100);
+  float x[50];
+  float y[50];
+  for (size_t i = 0; i < 50; i++)
+  {
+    x[i] = 0.1 * i;
+    y[i] = sinf(2 * M_PI * 0.5 * x[i]);
+  }
+  
+  uint16_t origin[2] = {50, BSP_LCD_GetYSize()-30};
+  uint16_t size[2] = {BSP_LCD_GetXSize() - 100, BSP_LCD_GetYSize() - 80};
+  PLT_Plot(x, y, 50, origin, size);
+  HAL_Delay(50000);
+  BSP_LCD_DisplayOff();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {    
+  {
+    break;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
