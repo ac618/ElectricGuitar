@@ -111,19 +111,17 @@ int main(void)
   BSP_LCD_SelectLayer(0);
   BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Electric Guitar Project", CENTER_MODE);
   printf("*****NTUEESAAD Electric Guitar Project*****\n");
-  // Draw Coordinates
-  // BSP_LCD_DrawHLine(40, BSP_LCD_GetYSize()-20, BSP_LCD_GetXSize()-80);
-  // BSP_LCD_DrawVLine(40, 80, BSP_LCD_GetYSize()-100);
+  // Plot example
   float x[50];
   float y[50];
   for (size_t i = 0; i < 50; i++)
   {
     x[i] = 0.1 * i;
-    y[i] = sinf(2 * M_PI * 0.5 * x[i]);
+    y[i] = 0.8*sinf(2 * M_PI * 0.5 * x[i]);
   }
   
-  uint16_t origin[2] = {50, BSP_LCD_GetYSize()-30};
-  uint16_t size[2] = {BSP_LCD_GetXSize() - 100, BSP_LCD_GetYSize() - 80};
+  uint16_t origin[2] = {60, BSP_LCD_GetYSize()-30};
+  uint16_t size[2] = {BSP_LCD_GetXSize() - 120, BSP_LCD_GetYSize() - 100};
   PLT_Plot(x, y, 50, origin, size);
   HAL_Delay(50000);
   BSP_LCD_DisplayOff();
