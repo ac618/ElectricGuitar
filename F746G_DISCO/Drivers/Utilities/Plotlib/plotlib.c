@@ -154,19 +154,19 @@ void plotLabels(Figure *fig)
     uint16_t font16Height = BSP_LCD_GetFont()->Height;
     if (fig->xTicks.order < -2 || fig->xTicks.order > 2)
     {
-        BSP_LCD_DisplayStringAt(fig->origin[0] + fig->size[0] + BSP_LCD_GetFont()->Width, fig->origin[1], "x10", LEFT_MODE);
+        BSP_LCD_DisplayStringAt(fig->origin[0] + fig->size[0] + BSP_LCD_GetFont()->Width, fig->origin[1], (uint8_t *)"x10", LEFT_MODE);
 
         sprintf(label, "%d", fig->xTicks.order);
         BSP_LCD_SetFont(&Font12);
-        BSP_LCD_DisplayStringAt(fig->origin[0] + fig->size[0] + 3.8 * font16Width, fig->origin[1] - 0.75 * font16Height, label, LEFT_MODE);
+        BSP_LCD_DisplayStringAt(fig->origin[0] + fig->size[0] + 3.8 * font16Width, fig->origin[1] - 0.75 * font16Height, (uint8_t *)label, LEFT_MODE);
     }
     BSP_LCD_SetFont(&Font16);
     if (fig->yTicks.order < -2 || fig->yTicks.order > 2)
     {
-        BSP_LCD_DisplayStringAt(BSP_LCD_GetXSize() - fig->origin[0], fig->origin[1] - fig->size[1] - BSP_LCD_GetFont()->Height - 10, "x10", RIGHT_MODE);
+        BSP_LCD_DisplayStringAt(BSP_LCD_GetXSize() - fig->origin[0], fig->origin[1] - fig->size[1] - BSP_LCD_GetFont()->Height - 10, (uint8_t *)"x10", RIGHT_MODE);
         sprintf(label, "%d", fig->yTicks.order);
         BSP_LCD_SetFont(&Font12);
-        BSP_LCD_DisplayStringAt(fig->origin[0] - 5, fig->origin[1] - fig->size[1] - 10 - 1.6 * font16Height, label, LEFT_MODE);
+        BSP_LCD_DisplayStringAt(fig->origin[0] - 5, fig->origin[1] - fig->size[1] - 10 - 1.6 * font16Height, (uint8_t *)label, LEFT_MODE);
     }
 }
 

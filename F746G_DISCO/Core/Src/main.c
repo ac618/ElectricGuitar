@@ -93,10 +93,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART1_UART_Init();
   MX_DMA2D_Init();
   MX_FMC_Init();
   MX_LTDC_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   // BSP LCD Initialization
   BSP_LCD_Init();
@@ -109,7 +109,6 @@ int main(void)
   BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
   // Start
   BSP_LCD_SelectLayer(0);
-  BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Electric Guitar Project", CENTER_MODE);
   printf("*****NTUEESAAD Electric Guitar Project*****\n");
   // Plot example
   float x[50];
@@ -117,24 +116,21 @@ int main(void)
   for (size_t i = 0; i < 50; i++)
   {
     x[i] = 0.1 * i;
-    y[i] = 0.0005*sinf(2 * M_PI * 0.5 * x[i]);
+    y[i] = 1*sinf(2 * M_PI * 0.5 * x[i]);
   }
-  
-  uint16_t origin[2] = {60, BSP_LCD_GetYSize()-30};
-  uint16_t size[2] = {BSP_LCD_GetXSize() - 120, BSP_LCD_GetYSize() - 100};
-  // PLT_Plot(x, y, 50, origin, size);
-  // Figure fig = {origin, size};
+  uint16_t origin[2] = {70, BSP_LCD_GetYSize()-30};
+  uint16_t size[2] = {BSP_LCD_GetXSize() - 120, BSP_LCD_GetYSize() - 70};
   Figure fig;
   PLT_Plot(&fig, x, y, 50, origin, size);
   HAL_Delay(50000);
   BSP_LCD_DisplayOff();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    break;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
