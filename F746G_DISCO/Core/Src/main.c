@@ -117,12 +117,15 @@ int main(void)
   for (size_t i = 0; i < 50; i++)
   {
     x[i] = 0.1 * i;
-    y[i] = 0.8*sinf(2 * M_PI * 0.5 * x[i]);
+    y[i] = 0.0005*sinf(2 * M_PI * 0.5 * x[i]);
   }
   
   uint16_t origin[2] = {60, BSP_LCD_GetYSize()-30};
   uint16_t size[2] = {BSP_LCD_GetXSize() - 120, BSP_LCD_GetYSize() - 100};
-  PLT_Plot(x, y, 50, origin, size);
+  // PLT_Plot(x, y, 50, origin, size);
+  // Figure fig = {origin, size};
+  Figure fig;
+  PLT_Plot(&fig, x, y, 50, origin, size);
   HAL_Delay(50000);
   BSP_LCD_DisplayOff();
   /* USER CODE END 2 */
