@@ -1,6 +1,6 @@
 # STM32F746G-DISCO ADC Voltmeter
 
-This project is a simple ADC voltmeter for the STM32F746G-DISCO board, generated using CubeMX and built with CMake. It reads the voltage on the PA0 (A0) pin and displays both the raw ADC value and the corresponding voltage on the LCD screen.
+This project is a simple ADC voltmeter for the STM32F746G-DISCO board. It reads the voltage on the PA0 (A0) pin and displays both the raw ADC value and the corresponding voltage on the LCD screen.
 
 ## Limitations
 

@@ -1,6 +1,6 @@
 # STM32F746G-DISCO LCD Plot
 
-This project implements a data visualization feature on the STM32F746G-DISCO board, similar to MATLAB's `plot()` function, using the LCD BSP library. The project is generated with CubeMX and built using CMake.
+This project implements a data visualization feature on the STM32F746G-DISCO board, similar to MATLAB's `plot()` function, using the LCD BSP library.
 
 ## Current Progress
 
