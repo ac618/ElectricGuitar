@@ -142,7 +142,6 @@ int main(void)
     if (BUFFER_STATE == BUFFER_HALF_FULL)
     {
       CopyBuffer(PlayBuffer, RecordBuffer, PCM_BUFFER_SIZE / 2);
-      printf("%d\n", RecordBuffer[0]);
       BUFFER_STATE = BUFFER_NONE;
     }
     else if (BUFFER_STATE == BUFFER_FULL)
