@@ -860,89 +860,83 @@ uint8_t BSP_AUDIO_IN_InitEx(uint16_t InputDevice, uint32_t AudioFreq, uint32_t B
 }
 
 /**
-  * @brief  Initializes wave recording and playback in parallel.
-  * @param  InputDevice: INPUT_DEVICE_DIGITAL_MICROPHONE_2
-  * @param  OutputDevice: OUTPUT_DEVICE_SPEAKER, OUTPUT_DEVICE_HEADPHONE,
-  *                       or OUTPUT_DEVICE_BOTH.
-  * @param  AudioFreq: Audio frequency to be configured for the SAI peripheral.
-  * @param  BitRes: Audio frequency to be configured.
-  * @param  ChnlNbr: Channel number.
-  * @retval AUDIO_OK if correct communication, else wrong communication
-  */
+ * @brief  Initializes wave recording and playback in parallel.
+ * @param  InputDevice: INPUT_DEVICE_DIGITAL_MICROPHONE_2 or INPUT_DEVICE_INPUT_LINE_1
+ * @param  OutputDevice: OUTPUT_DEVICE_SPEAKER, OUTPUT_DEVICE_HEADPHONE,
+ *                       or OUTPUT_DEVICE_BOTH.
+ * @param  AudioFreq: Audio frequency to be configured for the SAI peripheral.
+ * @param  BitRes: Audio frequency to be configured.
+ * @param  ChnlNbr: Channel number.
+ * @retval AUDIO_OK if correct communication, else wrong communication
+ */
 uint8_t BSP_AUDIO_IN_OUT_Init(uint16_t InputDevice, uint16_t OutputDevice, uint32_t AudioFreq, uint32_t BitRes, uint32_t ChnlNbr)
 {
   uint8_t ret = AUDIO_ERROR;
   uint32_t deviceid = 0x00;
   uint32_t slot_active;
 
-  if (InputDevice != INPUT_DEVICE_DIGITAL_MICROPHONE_2)  /* Only MICROPHONE_2 input supported */
+  /* Disable SAI */
+  SAIx_In_DeInit();
+  SAIx_Out_DeInit();
+
+  /* PLL clock is set depending on the AudioFreq (44.1khz vs 48khz groups) */
+  BSP_AUDIO_OUT_ClockConfig(&haudio_in_sai, AudioFreq, NULL); /* Clock config is shared between AUDIO IN and OUT */
+
+  /* SAI data transfer preparation:
+  Prepare the Media to be used for the audio transfer from SAI peripheral to memory */
+  haudio_in_sai.Instance = AUDIO_IN_SAIx;
+  if(HAL_SAI_GetState(&haudio_in_sai) == HAL_SAI_STATE_RESET)
   {
-    ret = AUDIO_ERROR;
+    /* Init the SAI MSP: this __weak function can be redefined by the application*/
+    BSP_AUDIO_IN_MspInit(&haudio_in_sai, NULL);
+  }
+
+  /* SAI data transfer preparation:
+  Prepare the Media to be used for the audio transfer from memory to SAI peripheral */
+  haudio_out_sai.Instance = AUDIO_OUT_SAIx;
+  if(HAL_SAI_GetState(&haudio_out_sai) == HAL_SAI_STATE_RESET)
+  {
+    /* Init the SAI MSP: this __weak function can be redefined by the application*/
+    BSP_AUDIO_OUT_MspInit(&haudio_out_sai, NULL);
+  }
+
+  /* Configure SAI in master mode :
+    *   - SAI2_block_A in master TX mode
+    *   - SAI2_block_B in slave RX mode synchronous from SAI2_block_A
+    */
+  if (InputDevice == INPUT_DEVICE_DIGITAL_MICROPHONE_2)
+  {
+    slot_active = CODEC_AUDIOFRAME_SLOT_13;
   }
   else
   {
-    /* Disable SAI */
-    SAIx_In_DeInit();
-    SAIx_Out_DeInit();
-
-    /* PLL clock is set depending on the AudioFreq (44.1khz vs 48khz groups) */
-    BSP_AUDIO_OUT_ClockConfig(&haudio_in_sai, AudioFreq, NULL); /* Clock config is shared between AUDIO IN and OUT */
-
-    /* SAI data transfer preparation:
-    Prepare the Media to be used for the audio transfer from SAI peripheral to memory */
-    haudio_in_sai.Instance = AUDIO_IN_SAIx;
-    if(HAL_SAI_GetState(&haudio_in_sai) == HAL_SAI_STATE_RESET)
-    {
-      /* Init the SAI MSP: this __weak function can be redefined by the application*/
-      BSP_AUDIO_IN_MspInit(&haudio_in_sai, NULL);
-    }
-
-    /* SAI data transfer preparation:
-    Prepare the Media to be used for the audio transfer from memory to SAI peripheral */
-    haudio_out_sai.Instance = AUDIO_OUT_SAIx;
-    if(HAL_SAI_GetState(&haudio_out_sai) == HAL_SAI_STATE_RESET)
-    {
-      /* Init the SAI MSP: this __weak function can be redefined by the application*/
-      BSP_AUDIO_OUT_MspInit(&haudio_out_sai, NULL);
-    }
-
-    /* Configure SAI in master mode :
-     *   - SAI2_block_A in master TX mode
-     *   - SAI2_block_B in slave RX mode synchronous from SAI2_block_A
-     */
-    if (InputDevice == INPUT_DEVICE_DIGITAL_MICROPHONE_2)
-    {
-      slot_active = CODEC_AUDIOFRAME_SLOT_13;
-    }
-    else
-    {
-      slot_active = CODEC_AUDIOFRAME_SLOT_02;
-    }
-    SAIx_In_Init(SAI_MODEMASTER_TX, slot_active, AudioFreq);
-    SAIx_Out_Init(AudioFreq);
-    
-    /* wm8994 codec initialization */
-    deviceid = wm8994_drv.ReadID(AUDIO_I2C_ADDRESS);
-
-    if((deviceid) == WM8994_ID)
-    {
-      /* Reset the Codec Registers */
-      wm8994_drv.Reset(AUDIO_I2C_ADDRESS);
-      /* Initialize the audio driver structure */
-      audio_drv = &wm8994_drv;
-      ret = AUDIO_OK;
-    }
-    else
-    {
-      ret = AUDIO_ERROR;
-    }
-
-    if(ret == AUDIO_OK)
-    {
-      /* Initialize the codec internal registers */
-      audio_drv->Init(AUDIO_I2C_ADDRESS, InputDevice | OutputDevice, 100, AudioFreq);
-    }
+    slot_active = CODEC_AUDIOFRAME_SLOT_02;
   }
+  SAIx_In_Init(SAI_MODEMASTER_TX, slot_active, AudioFreq);
+  SAIx_Out_Init(AudioFreq);
+  
+  /* wm8994 codec initialization */
+  deviceid = wm8994_drv.ReadID(AUDIO_I2C_ADDRESS);
+
+  if((deviceid) == WM8994_ID)
+  {
+    /* Reset the Codec Registers */
+    wm8994_drv.Reset(AUDIO_I2C_ADDRESS);
+    /* Initialize the audio driver structure */
+    audio_drv = &wm8994_drv;
+    ret = AUDIO_OK;
+  }
+  else
+  {
+    ret = AUDIO_ERROR;
+  }
+
+  if(ret == AUDIO_OK)
+  {
+    /* Initialize the codec internal registers */
+    audio_drv->Init(AUDIO_I2C_ADDRESS, InputDevice | OutputDevice, 100, AudioFreq);
+  }
+
   return ret;
 }
 

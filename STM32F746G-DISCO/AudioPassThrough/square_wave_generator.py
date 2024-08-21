@@ -5,7 +5,7 @@ import wave
 f = 440.0  # Frequency of the square wave in Hz
 Fs = 48000  # Sampling rate in Hz
 T = 1.0    # Duration in seconds
-A = 0.1    # Amplitude of the square wave
+A = 0.5    # Amplitude of the square wave
 
 # Number of samples
 N = int(Fs * T)
