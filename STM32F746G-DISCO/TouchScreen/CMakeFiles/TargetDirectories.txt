@@ -1,0 +1,5 @@
+C:/ElectricGuitar/STM32F746G-DISCO/TouchScreen/CMakeFiles/TouchScreen.dir
+C:/ElectricGuitar/STM32F746G-DISCO/TouchScreen/CMakeFiles/edit_cache.dir
+C:/ElectricGuitar/STM32F746G-DISCO/TouchScreen/CMakeFiles/rebuild_cache.dir
+C:/ElectricGuitar/STM32F746G-DISCO/TouchScreen/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+C:/ElectricGuitar/STM32F746G-DISCO/TouchScreen/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
