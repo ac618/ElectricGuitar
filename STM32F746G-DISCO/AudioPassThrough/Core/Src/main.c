@@ -238,6 +238,7 @@ PUTCHAR_PROTOTYPE
 }
 void CopyBuffer(uint16_t *dest, uint16_t *orig, size_t size)
 {
+  uint16_t noise_threshold = 500;
   for (size_t i = 0; i < size; i++)
   {
     dest[i] = orig[i];

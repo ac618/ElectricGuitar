@@ -53,6 +53,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     "Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_ts.c"
     "Drivers/BSP/STM32746G-Discovery/stm32746g_discovery.c"
     "Drivers/BSP/Components/ft5336/ft5336.c"
+    "Drivers/Utilities/UI/ui.c"
 )
 
 # Add include paths
@@ -63,7 +64,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     "Drivers/BSP/Components/ft5336"
     "Drivers/BSP/Components/Common"
     "Drivers/Utilities/Fonts"
-    
+    "Drivers/Utilities/UI"
 )
 
 # Add project symbols (macros)

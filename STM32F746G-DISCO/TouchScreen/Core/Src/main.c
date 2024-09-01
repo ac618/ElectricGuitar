@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_ts.h"
+#include "ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,56 +107,26 @@ int main(void)
   BSP_LCD_Clear(LCD_COLOR_BLACK);
   BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
   BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+  // Init Touch Screen
+  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
   // Start
   BSP_LCD_SelectLayer(0);
   // Touch Screen
-  BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+  Button button = {10, 20, 200, 80, LCD_COLOR_YELLOW};
+  UI_Button_Show(&button);
+  Slide slide = {10, 150, 400, 50, LCD_COLOR_WHITE, 50};
+  UI_Slide_Show(&slide);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   TS_StateTypeDef tsState;
-  uint16_t tsX = 0;
-  uint16_t tsY = 0;
   while (1)
   {
     BSP_TS_GetState(&tsState);
-    if (tsState.touchDetected)
-    {
-      tsX = tsState.touchX[0];
-      tsY = tsState.touchY[0];
-      BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-      BSP_LCD_FillCircle(tsX, tsY, 5);
-      if (tsState.touchDetected >= 2)
-      {
-        tsX = tsState.touchX[1];
-        tsY = tsState.touchY[1];
-        BSP_LCD_SetTextColor(LCD_COLOR_YELLOW);
-        BSP_LCD_FillCircle(tsX, tsY, 5);
-      }
-      if (tsState.touchDetected >= 3)
-      {
-        tsX = tsState.touchX[2];
-        tsY = tsState.touchY[2];
-        BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
-        BSP_LCD_FillCircle(tsX, tsY, 5);
-      }
-      if (tsState.touchDetected >= 4)
-      {
-        tsX = tsState.touchX[3];
-        tsY = tsState.touchY[3];
-        BSP_LCD_SetTextColor(LCD_COLOR_RED);
-        BSP_LCD_FillCircle(tsX, tsY, 5);
-      }
-      if (tsState.touchDetected >= 5)
-      {
-        tsX = tsState.touchX[4];
-        tsY = tsState.touchY[4];
-        BSP_LCD_SetTextColor(LCD_COLOR_BROWN);
-        BSP_LCD_FillCircle(tsX, tsY, 5);
-      }
-    }
-    
+    UI_Button_Detect(&button, &tsState);
+    UI_Slide_Detect(&slide, &tsState);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
