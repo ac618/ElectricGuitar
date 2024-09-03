@@ -77,7 +77,7 @@ EndDependencies */
 #include "../../Utilities/Fonts/font16.c"
 #include "../../Utilities/Fonts/font12.c"
 #include "../../Utilities/Fonts/font8.c"
-
+#include <stdio.h>
 /** @addtogroup BSP
   * @{
   */
@@ -196,6 +196,7 @@ uint8_t BSP_LCD_Init(void)
 #if !defined(DATA_IN_ExtSDRAM)
   /* Initialize the SDRAM */
   BSP_SDRAM_Init();
+  printf("SDRAM init\n");
 #endif
     
   /* Initialize the font */

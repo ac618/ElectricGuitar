@@ -50,6 +50,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     Drivers/Utilities/Common/uart_printf.c
     Drivers/Utilities/Renderer/renderer.c
+    Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c
 )
 
 # Add include paths
@@ -57,6 +58,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     Drivers/Utilities/Common
     Drivers/Utilities/Renderer
+    Drivers/BSP/Components/rk043fn48h
+    Drivers/BSP/STM32746G-Discovery
 )
 
 # Add project symbols (macros)
