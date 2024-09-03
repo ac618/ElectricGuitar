@@ -29,6 +29,7 @@
 /* Enable printf */
 #include "uart_printf.h"
 #include <stdio.h>
+#include "renderer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

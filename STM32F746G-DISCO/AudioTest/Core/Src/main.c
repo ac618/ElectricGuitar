@@ -38,7 +38,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#define SAI_BUFFER_SIZE 512
+#define PCM_BUFFER_SIZE 512
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,7 +49,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint16_t SAIBuffer[SAI_BUFFER_SIZE];
+uint16_t PCMBuffer[PCM_BUFFER_SIZE];
+uint8_t print_PCM = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,7 +88,7 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-/* Configure the peripherals common clocks */
+  /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
 
   /* USER CODE BEGIN SysInit */
@@ -101,15 +102,36 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  BSP_AUDIO_IN_InitEx(INPUT_DEVICE_DIGITAL_MICROPHONE_2, SAI_AUDIO_FREQUENCY_8K, DEFAULT_AUDIO_IN_BIT_RESOLUTION, 1);
+  BSP_AUDIO_IN_OUT_Init(INPUT_DEVICE_DIGITAL_MICROPHONE_2, OUTPUT_DEVICE_BOTH, 48000, 16, 2);
+  BSP_AUDIO_IN_Record(PCMBuffer, PCM_BUFFER_SIZE);
+  if (BSP_AUDIO_OUT_Play(PCMBuffer, PCM_BUFFER_SIZE) != AUDIO_OK)
+  {
+    printf("Play Error\n");
+    while (1)
+    {
+      /* code */
+    }
+    
+  }
+  
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    BSP_AUDIO_IN_Record(SAIBuffer, SAI_BUFFER_SIZE);
-    HAL_Delay(50);
+    if (print_PCM == 1)
+    {
+      printf("PCM Buffer:\n");
+      for (size_t i = 0; i < 10; i++)
+      {
+        printf("%d ", PCMBuffer[i]);
+      }
+      printf("...\n");
+      print_PCM = 0;
+    }
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -196,6 +218,10 @@ PUTCHAR_PROTOTYPE
 {
   HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
   return ch;
+}
+void BSP_AUDIO_IN_TransferComplete_CallBack()
+{
+  print_PCM = 1;
 }
 /* USER CODE END 4 */
 

@@ -875,7 +875,7 @@ uint8_t BSP_AUDIO_IN_OUT_Init(uint16_t InputDevice, uint16_t OutputDevice, uint3
   uint32_t deviceid = 0x00;
   uint32_t slot_active;
 
-  if (InputDevice != INPUT_DEVICE_DIGITAL_MICROPHONE_2)  /* Only MICROPHONE_2 input supported */
+  if (InputDevice == INPUT_DEVICE_DIGITAL_MICROPHONE_2)  /* Only MICROPHONE_2 input supported */
   {
     ret = AUDIO_ERROR;
   }

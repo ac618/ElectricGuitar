@@ -182,7 +182,9 @@ AUDIO_ErrorTypeDef Audio_Rec_Start(void)
             if (byteswritten != 0)
             {
                 BSP_AUDIO_IN_InitEx(INPUT_DEVICE, AUDIO_FREQ, DEFAULT_AUDIO_IN_BIT_RESOLUTION, DEFAULT_AUDIO_IN_CHANNEL_NBR);
-                BSP_AUDIO_IN_SetVolume(100);
+                // BSP_AUDIO_IN_SetVolume(100);
+                // BSP_AUDIO_IN_OUT_Init(INPUT_DEVICE, OUTPUT_DEVICE_HEADPHONE1, AUDIO_FREQ, DEFAULT_AUDIO_IN_BIT_RESOLUTION, DEFAULT_AUDIO_IN_CHANNEL_NBR);
+                BSP_AUDIO_IN_SetVolume(50);
                 BSP_AUDIO_IN_Record((uint16_t *)&BufferCtl.pcm_buff[0], AUDIO_IN_PCM_BUFFER_SIZE);
                 BufferCtl.fptr = byteswritten;
                 BufferCtl.pcm_ptr = 0;

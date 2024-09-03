@@ -28,6 +28,7 @@
 SAI_HandleTypeDef hsai_BlockA2;
 SAI_HandleTypeDef hsai_BlockB2;
 DMA_HandleTypeDef hdma_sai2_b;
+DMA_HandleTypeDef hdma_sai2_a;
 
 /* SAI2 init function */
 void MX_SAI2_Init(void)
@@ -133,6 +134,27 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* saiHandle)
     GPIO_InitStruct.Alternate = GPIO_AF10_SAI2;
     HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
 
+    /* Peripheral DMA init*/
+
+    hdma_sai2_a.Instance = DMA2_Stream4;
+    hdma_sai2_a.Init.Channel = DMA_CHANNEL_3;
+    hdma_sai2_a.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_sai2_a.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_sai2_a.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_sai2_a.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_sai2_a.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_sai2_a.Init.Mode = DMA_CIRCULAR;
+    hdma_sai2_a.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_sai2_a.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hdma_sai2_a) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* Several peripheral DMA handle pointers point to the same DMA handle.
+     Be aware that there is only one stream to perform all the requested DMAs. */
+    __HAL_LINKDMA(saiHandle,hdmarx,hdma_sai2_a);
+    __HAL_LINKDMA(saiHandle,hdmatx,hdma_sai2_a);
     }
     if(saiHandle->Instance==SAI2_Block_B)
     {
@@ -162,7 +184,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* saiHandle)
     hdma_sai2_b.Init.MemInc = DMA_MINC_ENABLE;
     hdma_sai2_b.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
     hdma_sai2_b.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-    hdma_sai2_b.Init.Mode = DMA_NORMAL;
+    hdma_sai2_b.Init.Mode = DMA_CIRCULAR;
     hdma_sai2_b.Init.Priority = DMA_PRIORITY_LOW;
     hdma_sai2_b.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_sai2_b) != HAL_OK)
@@ -198,6 +220,8 @@ void HAL_SAI_MspDeInit(SAI_HandleTypeDef* saiHandle)
     */
     HAL_GPIO_DeInit(GPIOI, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_6);
 
+    HAL_DMA_DeInit(saiHandle->hdmarx);
+    HAL_DMA_DeInit(saiHandle->hdmatx);
     }
     if(saiHandle->Instance==SAI2_Block_B)
     {
