@@ -102,9 +102,9 @@ int main(void)
   printf("test\n");
   RENDERER_Init(LTDC_PIXEL_FORMAT_RGB565);
   RENDERER_FillRect(0, 0, 100, 100, 0xFFFFFF);
-  // RENDERER_Swap_FB();
+  RENDERER_Swap_FB();
   /* USER CODE END 2 */
-  
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

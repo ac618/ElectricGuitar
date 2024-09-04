@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 LTDC_HandleTypeDef  hLtdcHandler;
+LTDC_LayerCfgTypeDef layer_cfg;
 DMA2D_HandleTypeDef hDma2dHandler;
 // uint8_t activeLayer = 0;
 uint32_t renderFB; // Frame buffer to render to the screen
@@ -64,7 +65,6 @@ void RENDERER_Init(uint32_t colorFormat)
     }
     
     /* Layer Init */
-    LTDC_LayerCfgTypeDef layer_cfg;
     layer_cfg.WindowX0 = 0;
     layer_cfg.WindowX1 = RK043FN48H_WIDTH;
     layer_cfg.WindowY0 = 0;
@@ -82,11 +82,14 @@ void RENDERER_Init(uint32_t colorFormat)
     layer_cfg.ImageHeight = RK043FN48H_HEIGHT;
     HAL_LTDC_ConfigLayer(&hLtdcHandler, &layer_cfg, 0);
 
-    /* DMA2D Settings*/
+    /* DMA2D Settings */
     hDma2dHandler.Init.Mode = DMA2D_R2M;
     hDma2dHandler.Init.ColorMode = colorFormat;
     hDma2dHandler.Instance = DMA2D;
-    
+
+    /* Fill Buffers With Black  */
+    RENDERER_DMA2D_FillBuffer((uint32_t *)renderFB, MAX_WIDTH, MAX_HEIGHT, 0, 0);
+    RENDERER_DMA2D_FillBuffer((uint32_t *)drawFB, MAX_WIDTH, MAX_HEIGHT, 0, 0);
 }
 void RENDERER_MspInit()
 {
@@ -157,11 +160,11 @@ void RENDERER_FillRect(uint16_t posX, uint16_t posY, uint16_t width, uint16_t he
 
     if (hLtdcHandler.LayerCfg[0].PixelFormat == LTDC_PIXEL_FORMAT_RGB565)
     {
-        x_address = renderFB + 2 * (MAX_WIDTH * posY + posX);
+        x_address = drawFB + 2 * (MAX_WIDTH * posY + posX);
     }
     else
     {
-        x_address = renderFB + 4 * (MAX_WIDTH * posY + posX);
+        x_address = drawFB + 4 * (MAX_WIDTH * posY + posX);
     }
     
     /* Fill the rectangle */
@@ -180,7 +183,8 @@ void RENDERER_Swap_FB()
     renderFB = drawFB;
     drawFB = temp;
     /* reconfigure layer to show swaped frame buffer */
-    hLtdcHandler.LayerCfg[0].FBStartAdress = renderFB;
+    layer_cfg.FBStartAdress = renderFB;
+    HAL_LTDC_ConfigLayer(&hLtdcHandler, &layer_cfg, 0);
 }
 
 void RENDERER_DMA2D_FillBuffer(void *pDest, uint32_t width, uint32_t height, uint32_t offset, uint32_t color)
