@@ -1,52 +1,64 @@
 #include "engine.h"
+#include <stdio.h>
 
-Button buttons = {};
-Slide slides = {};
+uint8_t update_flag = 0;
+uint8_t vsync_flag = 0;
+Button button1;
+Slide slide1;
 
-uint16_t button_num;
-uint16_t slide_num;
-
-void Collect(TS_StateTypeDef *tsState)
+void Engine_Init()
 {
-    if (tsState->touchDetected)
-    {
-        uint16_t posX, posY;
-        for (size_t i = 0; i < tsState->touchDetected; i++)
-        {
-            posX = tsState->touchX[i];
-            posY = tsState->touchX[i];
-            for (size_t i = 0; i < button_num; i++)
-            {
-                /* code */
-            }
-            for (size_t i = 0; i < slide_num; i++)
-            {
-                /* code */
-            }
-        }
-        Update();
-    }
-    
+    Button_Init(&button1, 50, 50, 200, 100, 0x00d2ff);
+    Slide_Init(&slide1, 50, 180, 300, 50, 0x9ccea5, 0xffffff, 50);
 }
-void Update()
+
+void Engine_Collect()
 {
-    uint8_t updated = 0;
-    for (size_t i = 0; i < button_num; i++)
+    TS_StateTypeDef tsState;
+    BSP_TS_GetState(&tsState);
+    uint16_t touchX = 1000;
+    uint16_t touchY = 1000;
+    if (tsState.touchDetected)
     {
-        /* code */
+        touchX = tsState.touchX[0];
+        touchY = tsState.touchY[0];
     }
-    for (size_t i = 0; i < slide_num; i++)
-    {
-        /* code */
-    }
-    if (updated = 1)
-    {
-        Render();
-    }
-    
-    
+    Button_Detect(&button1, touchX, touchY);
+    Slide_Detect(&slide1, touchX, touchY);
 }
-void Render()
+void Engine_Update()
 {
-    RENDERER_Swap_FB();
+    Button_Update(&button1);
+    Slide_Update(&slide1);
+}
+void Engine_Render()
+{
+    if (button1.request == REDRAW)
+    {
+        Button_Render(&button1);
+        update_flag = 1;
+    }
+    if (slide1.request == REDRAW)
+    {
+        Slide_Render(&slide1);
+        update_flag = 1;
+    }
+    if (update_flag == 1)
+    {
+        RENDERER_Swap_FB();
+        update_flag = 0;
+    }
+}
+void Engine_Wait()
+{
+    vsync_flag = 0;
+    while (vsync_flag == 0)
+    {
+    }
+    vsync_flag = 0;
+}
+void HAL_LTDC_LineEventCallback(LTDC_HandleTypeDef *hltdc)
+{
+    __HAL_LTDC_ENABLE_IT(hltdc, LTDC_IT_LI);
+    vsync_flag = 1;
 }

@@ -2,6 +2,8 @@
 #include "renderer.h"
 #include "stm32746g_discovery_ts.h"
 
-void Collect(TS_StateTypeDef *tsState);
-void Update();
-void Render();
+void Engine_Init();
+void Engine_Collect();
+void Engine_Update();
+void Engine_Render();
+void Engine_Wait();

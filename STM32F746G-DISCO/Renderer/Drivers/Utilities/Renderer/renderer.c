@@ -46,6 +46,8 @@ void RENDERER_Init(uint32_t colorFormat)
         RENDERER_MspInit(&hLtdcHandler, NULL);
     }
     HAL_LTDC_Init(&hLtdcHandler);
+    // Turn on VSYNC inturrupt
+    HAL_LTDC_ProgramLineEvent(&hLtdcHandler, 0);
     // Turn on display
     HAL_GPIO_WritePin(LCD_DISP_GPIO_PORT, LCD_DISP_PIN, GPIO_PIN_SET);
     HAL_GPIO_WritePin(LCD_BL_CTRL_GPIO_PORT, LCD_BL_CTRL_PIN, GPIO_PIN_SET);
@@ -173,7 +175,7 @@ void RENDERER_FillRect(uint16_t posX, uint16_t posY, uint16_t width, uint16_t he
 
 void RENDERER_Copy_FB(uint32_t newFB_Addr, uint32_t oldFB_Addr)
 {
-
+    
 }
 
 void RENDERER_Swap_FB()

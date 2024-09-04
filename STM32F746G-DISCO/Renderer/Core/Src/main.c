@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include "renderer.h"
 #include "stm32746g_discovery_ts.h"
+#include "engine.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,14 +103,17 @@ int main(void)
   UART_Printf_Init(&huart1);
   BSP_TS_Init(MAX_WIDTH, MAX_HEIGHT);
   RENDERER_Init(LTDC_PIXEL_FORMAT_RGB565);
-  RENDERER_FillRect(0, 0, 100, 100, 0xFFFFFF);
-  RENDERER_Swap_FB();
+  Engine_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    Engine_Collect();
+    Engine_Update();
+    Engine_Render();
+    Engine_Wait();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -175,7 +179,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
 /* USER CODE END 4 */
 
 /**
