@@ -8,8 +8,8 @@
 #define LCD_BL_CTRL_PIN GPIO_PIN_3
 #define LCD_BL_CTRL_GPIO_PORT GPIOK
 #define SDRAM_START_ADDRESS       ((uint32_t)0xC0000000)
-#define MAX_WIDTH RK043FN48H_WIDTH
-#define MAX_HEIGHT RK043FN48H_HEIGHT
+#define MAX_WIDTH ((uint16_t)480)
+#define MAX_HEIGHT ((uint16_t)272)
 
 void RENDERER_Init(uint32_t colorFormat);
 void RENDERER_MspInit();

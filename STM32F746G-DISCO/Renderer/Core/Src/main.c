@@ -30,6 +30,7 @@
 #include "uart_printf.h"
 #include <stdio.h>
 #include "renderer.h"
+#include "stm32746g_discovery_ts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,7 +100,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   UART_Printf_Init(&huart1);
-  printf("test\n");
+  BSP_TS_Init(MAX_WIDTH, MAX_HEIGHT);
   RENDERER_Init(LTDC_PIXEL_FORMAT_RGB565);
   RENDERER_FillRect(0, 0, 100, 100, 0xFFFFFF);
   RENDERER_Swap_FB();
