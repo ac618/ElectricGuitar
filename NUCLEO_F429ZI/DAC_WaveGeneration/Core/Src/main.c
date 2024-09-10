@@ -35,7 +35,11 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DAC_BUFFER_SIZE 25
+#define SAMPLING_RATE 100000
+#define SINE_FREQUENCY 500
+#define AMPLITUDE 0.5 // volts in the range of [0, 1.65]
+#define DAC_BUFFER_SIZE (SAMPLING_RATE/SINE_FREQUENCY) // Do not modify
+#define PRESCALED_FREQUENCY 1000000 // frequency of TIM2 / (PSC + 1)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -68,11 +72,10 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  // Generate sine wave DAC data
-  float ts = 0.0001;
-  for (size_t i = 0; i < 25; i++)
+  /* Generate sine wave DAC data */
+  for (size_t i = 0; i < DAC_BUFFER_SIZE; i++)
   {
-    dacBuffer[i] = (uint16_t)((sinf(2*M_PI*400*i*ts)+1) * 4096 / 3.3);
+    dacBuffer[i] = (uint16_t)((AMPLITUDE*sinf(2*M_PI*SINE_FREQUENCY*i/SAMPLING_RATE)+AMPLITUDE) * 4096 / 3.3);
   }
   /* USER CODE END 1 */
 
@@ -98,6 +101,9 @@ int main(void)
   MX_DAC_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  // Adjust timer period (ARR)
+  htim2.Init.Period = PRESCALED_FREQUENCY / DAC_BUFFER_SIZE / SINE_FREQUENCY - 1;
+  HAL_TIM_Base_Init(&htim2);
   HAL_TIM_Base_Start(&htim2);
   HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t *)dacBuffer, DAC_BUFFER_SIZE, DAC_ALIGN_12B_R);
   /* USER CODE END 2 */
