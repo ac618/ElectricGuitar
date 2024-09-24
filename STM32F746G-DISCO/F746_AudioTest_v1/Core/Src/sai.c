@@ -122,19 +122,12 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* saiHandle)
     SAI2_client ++;
 
     /**SAI2_A_Block_A GPIO Configuration
-    PE0     ------> SAI2_MCLK_A
+    PI4     ------> SAI2_MCLK_A
     PI5     ------> SAI2_SCK_A
     PI7     ------> SAI2_FS_A
     PI6     ------> SAI2_SD_A
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF10_SAI2;
-    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_6;
+    GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -220,14 +213,12 @@ void HAL_SAI_MspDeInit(SAI_HandleTypeDef* saiHandle)
       }
 
     /**SAI2_A_Block_A GPIO Configuration
-    PE0     ------> SAI2_MCLK_A
+    PI4     ------> SAI2_MCLK_A
     PI5     ------> SAI2_SCK_A
     PI7     ------> SAI2_FS_A
     PI6     ------> SAI2_SD_A
     */
-    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_0);
-
-    HAL_GPIO_DeInit(GPIOI, GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_6);
+    HAL_GPIO_DeInit(GPIOI, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_6);
 
     HAL_DMA_DeInit(saiHandle->hdmarx);
     HAL_DMA_DeInit(saiHandle->hdmatx);

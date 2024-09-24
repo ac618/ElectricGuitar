@@ -24,14 +24,16 @@ target_sources(stm32cubemx INTERFACE
     ../../Core/Src/main.c
     ../../Core/Src/gpio.c
     ../../Core/Src/dma.c
+    ../../Core/Src/dma2d.c
+    ../../Core/Src/fmc.c
+    ../../Core/Src/ltdc.c
     ../../Core/Src/sai.c
     ../../Core/Src/tim.c
     ../../Core/Src/usart.c
     ../../Core/Src/stm32f7xx_it.c
     ../../Core/Src/stm32f7xx_hal_msp.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c
-    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sai.c
-    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sai_ex.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_flash.c
@@ -45,6 +47,13 @@ target_sources(stm32cubemx INTERFACE
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_exti.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sdram.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dsi.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sai.c
+    ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sai_ex.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim_ex.c
     ../../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c

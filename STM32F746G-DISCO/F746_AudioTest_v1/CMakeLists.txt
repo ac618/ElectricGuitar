@@ -51,6 +51,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/BSP/Components/wm8994/wm8994.c
     Drivers/BSP/STM32746G-Discovery/stm32746g_discovery.c
     Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_audio.c
+    Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_lcd.c
+    Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c
+    Core/Src/Effect/delay.c
+    Core/Src/Effect/distortion.c
 )
 
 # Add include paths
@@ -58,6 +62,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     Drivers/BSP/Components
     Drivers/BSP/STM32746G-Discovery
+    Drivers/BSP/Utilities/Fonts
+    Core/Inc/Effect
 )
 
 # Add project symbols (macros)

@@ -19,16 +19,24 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dma.h"
+#include "dma2d.h"
+#include "ltdc.h"
 #include "sai.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "fmc.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "wm8994/wm8994.h"
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_audio.h"
+#include "stm32746g_discovery_lcd.h"
+#include "stm32746g_discovery_sdram.h"
+#include "distortion.h"
+#include "delay.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,14 +51,7 @@ typedef enum
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#define AUDIO_FREQ AUDIO_FREQUENCY_48K
-#define VOLUME 65
-#define BUFFER_SIZE_SAMPLES 4096
-#define DMA_BYTES_PER_FRAME 8
-#define DMA_BYTES_PER_MSIZE 2
-#define DMA_BUFFER_SIZE_BYTES BUFFER_SIZE_SAMPLES *DMA_BYTES_PER_FRAME
-#define DMA_BUFFER_SIZE_MSIZE DMA_BUFFER_SIZE_BYTES / DMA_BYTES_PER_MSIZE
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,11 +64,17 @@ typedef enum
 /* USER CODE BEGIN PV */
 extern SAI_HandleTypeDef haudio_out_sai;
 extern SAI_HandleTypeDef haudio_in_sai;
-static int16_t recordBuffer[BUFFER_SIZE_SAMPLES];
-static int16_t playbackBuffer[BUFFER_SIZE_SAMPLES];
+static int16_t sampleBuffer[BUFFER_SIZE_SAMPLES];
 static uint8_t saiDMATransmitBuffer[DMA_BUFFER_SIZE_BYTES];
 static uint8_t saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES];
 volatile uint32_t audio_rec_buffer_state;
+
+// LCD Fonts
+extern sFONT Font24;
+extern sFONT Font20;
+extern sFONT Font16;
+extern sFONT Font12;
+extern sFONT Font8;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -130,8 +137,25 @@ int main(void)
   MX_SAI2_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_DMA2D_Init();
+  MX_FMC_Init();
+  MX_LTDC_Init();
   /* USER CODE BEGIN 2 */
-  // BSP_Bringup();
+  // BSP LCD Initialization
+  BSP_LCD_Init();
+  BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
+  BSP_LCD_DisplayOn();
+  // Layer 0
+  BSP_LCD_SelectLayer(0);
+  BSP_LCD_Clear(LCD_COLOR_BLACK);
+  BSP_LCD_SetBackColor(LCD_COLOR_BLACK);
+  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+  // Start
+  BSP_LCD_SelectLayer(0);
+  BSP_LCD_SetFont(&Font20);
+  BSP_LCD_DisplayStringAt(0, 10, (uint8_t *)"Electric Guitar Effect Pedal", CENTER_MODE);
+
+  // Audio Setup
   AudioInit();
   audio_rec_buffer_state = BUFFER_OFFSET_NONE;
   /* USER CODE END 2 */
@@ -144,21 +168,21 @@ int main(void)
     {
       if (audio_rec_buffer_state == BUFFER_OFFSET_HALF)
       {
+        // PrintDMABuffer(&saiDMAReceiveBuffer[0], 20);
+        // DistortionProcess(&saiDMAReceiveBuffer[0], 1, 600, DMA_BUFFER_SIZE_BYTES / 2);
+        DelayProcess(&saiDMAReceiveBuffer[0], 0.7, 5000, DMA_BUFFER_SIZE_BYTES / 2);
         CopyDMABuffer(&saiDMATransmitBuffer[0], &saiDMAReceiveBuffer[0], DMA_BUFFER_SIZE_BYTES / 2);
-        /*
-        ExtractSampleFromDMA(&saiDMAReceiveBuffer[0], &recordBuffer[0], BUFFER_SIZE_SAMPLES / 2);
-        CopySampleBuffer(&playbackBuffer[0], &recordBuffer[0], BUFFER_SIZE_SAMPLES / 2);
-        ConvertSampleToDMA(&playbackBuffer[0], &saiDMATransmitBuffer[0], BUFFER_SIZE_SAMPLES / 2);
-        */
+        // ExtractSampleFromDMA(&saiDMAReceiveBuffer[0], &sampleBuffer[0], BUFFER_SIZE_SAMPLES / 2);
+        // ConvertSampleToDMA(&sampleBuffer[0], &saiDMATransmitBuffer[0], BUFFER_SIZE_SAMPLES / 2);
       }
       else if (audio_rec_buffer_state == BUFFER_OFFSET_FULL)
       {
+        // PrintDMABuffer(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 20);
+        // DistortionProcess(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 1, 600, DMA_BUFFER_SIZE_BYTES / 2);
+        DelayProcess(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 0.7, 5000, DMA_BUFFER_SIZE_BYTES / 2);
         CopyDMABuffer(&saiDMATransmitBuffer[DMA_BUFFER_SIZE_BYTES / 2], &saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], DMA_BUFFER_SIZE_BYTES / 2);
-        /*
-        ExtractSampleFromDMA(&saiDMAReceiveBuffer[BUFFER_SIZE_SAMPLES / 2], &recordBuffer[BUFFER_SIZE_SAMPLES / 2], BUFFER_SIZE_SAMPLES / 2);
-        CopySampleBuffer(&playbackBuffer[BUFFER_SIZE_SAMPLES / 2], &recordBuffer[BUFFER_SIZE_SAMPLES / 2], BUFFER_SIZE_SAMPLES / 2);
-        ConvertSampleToDMA(&playbackBuffer[BUFFER_SIZE_SAMPLES / 2], &saiDMATransmitBuffer[BUFFER_SIZE_SAMPLES / 2], BUFFER_SIZE_SAMPLES / 2);
-        */
+        // ExtractSampleFromDMA(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], &sampleBuffer[DMA_BUFFER_SIZE_BYTES / 2], BUFFER_SIZE_SAMPLES / 2);
+        // ConvertSampleToDMA(&sampleBuffer[DMA_BUFFER_SIZE_BYTES / 2], &saiDMATransmitBuffer[DMA_BUFFER_SIZE_BYTES / 2], BUFFER_SIZE_SAMPLES / 2);
       }
       audio_rec_buffer_state = BUFFER_OFFSET_NONE;
     }
@@ -185,7 +209,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
    */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
    * in the RCC_OscInitTypeDef structure.
@@ -195,11 +219,18 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 10;
+  RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 210;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Activate the Over-Drive mode
+   */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
@@ -212,7 +243,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6) != HAL_OK)
   {
     Error_Handler();
   }
@@ -228,8 +259,8 @@ void PeriphCommonClock_Config(void)
 
   /** Initializes the peripherals clock
    */
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SAI2;
-  PeriphClkInitStruct.PLLSAI.PLLSAIN = 192;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC | RCC_PERIPHCLK_SAI2;
+  PeriphClkInitStruct.PLLSAI.PLLSAIN = 50;
   PeriphClkInitStruct.PLLSAI.PLLSAIR = 2;
   PeriphClkInitStruct.PLLSAI.PLLSAIQ = 2;
   PeriphClkInitStruct.PLLSAI.PLLSAIP = RCC_PLLSAIP_DIV2;
@@ -256,15 +287,15 @@ void PrintSampleBuffer(int16_t *buffer, size_t size)
 {
   for (size_t i = 0; i < size; i++)
   {
-    printf("%u ", buffer[i]);
+    printf("%i ", buffer[i]);
   }
   printf("\n");
 }
 
 void BSP_Bringup(void)
 {
-  FillSquareWave(playbackBuffer, BUFFER_SIZE_SAMPLES);
-  ConvertSampleToDMA(playbackBuffer, saiDMATransmitBuffer, BUFFER_SIZE_SAMPLES);
+  FillSquareWave(sampleBuffer, BUFFER_SIZE_SAMPLES);
+  ConvertSampleToDMA(sampleBuffer, saiDMATransmitBuffer, BUFFER_SIZE_SAMPLES);
   BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_HEADPHONE, VOLUME, AUDIO_FREQ);
   HAL_SAI_Transmit_DMA(&haudio_out_sai, saiDMATransmitBuffer, DMA_BUFFER_SIZE_MSIZE);
 
