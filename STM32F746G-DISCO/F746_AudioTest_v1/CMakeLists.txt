@@ -55,6 +55,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/BSP/STM32746G-Discovery/stm32746g_discovery_sdram.c
     Core/Src/Effect/delay.c
     Core/Src/Effect/distortion.c
+    Core/Src/Effect/wahwah.c
 )
 
 # Add include paths
@@ -76,4 +77,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
 
     # Add user defined libraries
+)
+# Add linker flags
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -u _printf_float # floating point support
 )

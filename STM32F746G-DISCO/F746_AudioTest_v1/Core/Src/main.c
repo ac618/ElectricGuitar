@@ -30,13 +30,13 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include "wm8994/wm8994.h"
 #include "stm32746g_discovery.h"
 #include "stm32746g_discovery_audio.h"
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_sdram.h"
 #include "distortion.h"
 #include "delay.h"
+#include "wahwah.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -158,6 +158,9 @@ int main(void)
   // Audio Setup
   AudioInit();
   audio_rec_buffer_state = BUFFER_OFFSET_NONE;
+
+  // Effect Setup
+  WahWah_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -170,7 +173,8 @@ int main(void)
       {
         // PrintDMABuffer(&saiDMAReceiveBuffer[0], 20);
         // DistortionProcess(&saiDMAReceiveBuffer[0], 1, 600, DMA_BUFFER_SIZE_BYTES / 2);
-        DelayProcess(&saiDMAReceiveBuffer[0], 0.7, 5000, DMA_BUFFER_SIZE_BYTES / 2);
+        // DelayProcess(&saiDMAReceiveBuffer[0], 0.7, 5000, DMA_BUFFER_SIZE_BYTES / 2);
+        WahWahProcess(&saiDMAReceiveBuffer[0], 250, 3, 0.3, DMA_BUFFER_SIZE_BYTES / 2);
         CopyDMABuffer(&saiDMATransmitBuffer[0], &saiDMAReceiveBuffer[0], DMA_BUFFER_SIZE_BYTES / 2);
         // ExtractSampleFromDMA(&saiDMAReceiveBuffer[0], &sampleBuffer[0], BUFFER_SIZE_SAMPLES / 2);
         // ConvertSampleToDMA(&sampleBuffer[0], &saiDMATransmitBuffer[0], BUFFER_SIZE_SAMPLES / 2);
@@ -179,7 +183,8 @@ int main(void)
       {
         // PrintDMABuffer(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 20);
         // DistortionProcess(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 1, 600, DMA_BUFFER_SIZE_BYTES / 2);
-        DelayProcess(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 0.7, 5000, DMA_BUFFER_SIZE_BYTES / 2);
+        // DelayProcess(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 0.7, 5000, DMA_BUFFER_SIZE_BYTES / 2);
+        WahWahProcess(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], 250, 3, 0.3, DMA_BUFFER_SIZE_BYTES / 2);
         CopyDMABuffer(&saiDMATransmitBuffer[DMA_BUFFER_SIZE_BYTES / 2], &saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], DMA_BUFFER_SIZE_BYTES / 2);
         // ExtractSampleFromDMA(&saiDMAReceiveBuffer[DMA_BUFFER_SIZE_BYTES / 2], &sampleBuffer[DMA_BUFFER_SIZE_BYTES / 2], BUFFER_SIZE_SAMPLES / 2);
         // ConvertSampleToDMA(&sampleBuffer[DMA_BUFFER_SIZE_BYTES / 2], &saiDMATransmitBuffer[DMA_BUFFER_SIZE_BYTES / 2], BUFFER_SIZE_SAMPLES / 2);

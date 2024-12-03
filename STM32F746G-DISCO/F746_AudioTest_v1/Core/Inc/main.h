@@ -28,6 +28,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "wm8994/wm8994.h"
 #include "stm32f7xx_hal.h"
 
   /* Private includes ----------------------------------------------------------*/
@@ -61,8 +62,8 @@ extern "C"
 
 /* USER CODE BEGIN Private defines */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#define AUDIO_FREQ AUDIO_FREQUENCY_48K
-#define VOLUME 55
+#define AUDIO_FREQ AUDIO_FREQUENCY_16K
+#define VOLUME 60
 #define BUFFER_SIZE_SAMPLES 8192
 #define DMA_BYTES_PER_FRAME 8
 #define DMA_BYTES_PER_MSIZE 2
